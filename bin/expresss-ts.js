@@ -64,7 +64,7 @@ const files = [
       projectName === "." ? path.basename(currentDir) : projectName
     }",\n  "version": "1.0.0",\n  "description": "Express TypeScript Starter",\n  "main": "dist/index.js",\n  "scripts": {\n    "start": "node dist/index.js",\n    "build": "tsc",\n    "dev": "nodemon --exec ts-node src/index.ts",\n    "lint": "eslint . --ext .ts"\n  },\n  "keywords": ["${
       projectName === "." ? path.basename(currentDir) : projectName
-    }"],\n  "author": "",\n  "license": "MIT",// Change me\n  "dependencies": {\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
+    }"],\n  "author": "",\n  "dependencies": {\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
   },
   {
     path: ".eslintrc.json",
