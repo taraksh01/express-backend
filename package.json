@@ -1,10 +1,10 @@
 {
-  "name": "express-backend",
+  "name": "expresss-ts",
   "version": "1.0.0",
   "description": "CLI to create an Express TypeScript starter project",
   "main": "dist/index.js",
   "bin": {
-    "express-backend": "./bin/express-backend.js"
+    "expresss-ts": "./bin/expresss-ts.js"
   },
   "scripts": {
     "start": "node dist/index.js",
