@@ -43,7 +43,7 @@ const files = [
   },
   {
     path: "src/models/example.model.ts",
-    content: `// This is an example model`,
+    content: `// Write your database model here`,
   },
   {
     path: "src/types/example.types.ts",
@@ -71,7 +71,7 @@ const files = [
   },
   {
     path: "src/index.ts",
-    content: `import express, { NextFunction, Request, Response, Application } from "express";\nimport dotenv from "dotenv";\nimport cors from "cors";\nimport healthRoutes from "./routes/health.routes";\nimport exampleRoutes from "./routes/example.routes";\nimport ApiError from "./utils/ApiError";\n\ndotenv.config({paht: ".env"});\n\nconst app: Application = express();\nconst port = process.env.PORT || 5555;\nconst allowedOrigins = "*"; "// Allows anyone to access the API"\n\napp.use(express.json({limit: "20kb"})); "// Limit the body size to 20kb"\napp.use(cors({ origin: allowedOrigins }));\napp.use(express.urlencoded({ extended: true }));\n\n// API routes\napp.use("/api/health", healthRoutes);\napp.use("/api/example", exampleRoutes);\n\n"// If your application using database, Establish database connection here"\n\napp.listen(port, ()=> {\n  console.log(\`Server is running on port \${port}\`);\n});\n\napp.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {\n  res.status(err.statusCode || 500).json({ message: err.message, errors: err.errors });\n});\n\n`,
+    content: `import express, { NextFunction, Request, Response, Application } from "express";\nimport dotenv from "dotenv";\nimport cors from "cors";\nimport healthRoutes from "./routes/health.routes";\nimport exampleRoutes from "./routes/example.routes";\nimport ApiError from "./utils/ApiError";\n\ndotenv.config({paht: ".env"});\n\nconst app: Application = express();\nconst port = process.env.PORT || 5555;\nconst allowedOrigins = "*"; // Allows anyone to access the API\n\napp.use(express.json({limit: "20kb"})); // Limit the body size to 20kb\napp.use(cors({ origin: allowedOrigins }));\napp.use(express.urlencoded({ extended: true }));\n\n// API routes\napp.use("/api/health", healthRoutes);\napp.use("/api/example", exampleRoutes);\n\n// If your application using database, Establish database connection here\n\napp.listen(port, ()=> {\n  console.log(\`Server is running on port \${port}\`);\n});\n\napp.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {\n  res.status(err.statusCode || 500).json({ message: err.message, errors: err.errors });\n});\n\n`,
   },
   { path: ".env", content: `PORT=5555` },
   {
@@ -84,7 +84,7 @@ const files = [
       projectName === "." ? path.basename(currentDir) : projectName
     }",\n  "version": "1.0.0",\n  "description": "Express TypeScript Starter",\n  "main": "dist/index.js",\n  "scripts": {\n    "start": "node dist/index.js",\n    "build": "tsc",\n    "dev": "nodemon --exec ts-node src/index.ts",\n    "lint": "eslint . --ext .ts"\n  },\n  "keywords": ["${
       projectName === "." ? path.basename(currentDir) : projectName
-    }"],\n  "author": "", "// Your name"\n  "dependencies": {\n    "cors": "^2.8.5",\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/cors": "^2.8.17",\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
+    }"],\n  "author": "", // Your name\n  "dependencies": {\n    "cors": "^2.8.5",\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/cors": "^2.8.17",\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
   },
   {
     path: ".eslintrc.json",
