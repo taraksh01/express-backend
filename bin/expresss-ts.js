@@ -27,7 +27,7 @@ srcDirs.forEach((dir) => fs.mkdirSync(path.join(projectDir, "src", dir)));
 const files = [
   {
     path: "src/controllers/example.controllers.ts",
-    content: `import { Request, Response } from "express";\nimport { ExampleItem } from "../types/example.types";\nimport { capitalizeString, generateRandomId } from "../utils/example.utils";\n\nexport const getExample = (req: Request, res: Response) => {\n  const exampleItem: ExampleItem = {\n    id: generateRandomId(),\n    name: capitalizeString("example"),\n    description: "This is an example item",\n  };\n\n  res.status(200).json(exampleItem);\n};\n\nexport const postExample = (req: Request, res: Response) => {\n  const { name = "Not provided", description = "Not provided" } = req.body;\n  const newItem: ExampleItem = {\n    id: generateRandomId(),\n    name: capitalizeString(name),\n    description,\n  };\n\n  res.status(201).json(newItem);\n};\n`,
+    content: `import { Request, Response } from "express";\nimport { ExampleType } from "../types/example.types";\nimport { capitalizeString, generateRandomId } from "../utils/example.utils";\n\nexport const getExample = (req: Request, res: Response) => {\n  const exampleItem: ExampleType = {\n    id: generateRandomId(),\n    name: capitalizeString("example"),\n    description: "This is an example item",\n  };\n\n  res.status(200).json(exampleItem);\n};\n\nexport const postExample = (req: Request, res: Response) => {\n  const { name = "Not provided", description = "Not provided" } = req.body;\n  const newItem: ExampleType = {\n    id: generateRandomId(),\n    name: capitalizeString(name),\n    description,\n  };\n\n  res.status(201).json(newItem);\n};\n`,
   },
   {
     path: "src/routes/example.routes.ts",
@@ -47,7 +47,7 @@ const files = [
   },
   {
     path: "src/utils/example.utils.ts",
-    content: `export const capitalizeString = (str) => {\n  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n\nexport const generateRandomId = () => {\n  return Math.random().toString(36).substring(2, 9);\n\n};`,
+    content: `export const capitalizeString = (str:string) => {\n  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n}\n\nexport const generateRandomId = () => {\n  return Math.random().toString(36).substring(2, 9);\n}\n;`,
   },
   {
     path: "src/index.ts",
