@@ -1,6 +1,6 @@
 {
   "name": "expresss-ts",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "CLI to create an Express TypeScript starter project",
   "main": "dist/index.js",
   "bin": {

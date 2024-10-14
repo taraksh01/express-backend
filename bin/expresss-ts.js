@@ -14,16 +14,13 @@ if (!projectName) {
 const currentDir = process.cwd();
 const projectDir = path.join(currentDir, projectName);
 
-// Create project directory
-fs.mkdirSync(projectDir, { recursive: true });
-
-// Create src directory and its subdirectories
+// Create project directory and src subdirectories
 const srcDirs = ["controllers", "routes", "models", "db", "types", "utils"];
-
+fs.mkdirSync(projectDir, { recursive: true });
 fs.mkdirSync(path.join(projectDir, "src"));
 srcDirs.forEach((dir) => fs.mkdirSync(path.join(projectDir, "src", dir)));
 
-// Create files
+// File templates
 const files = [
   {
     path: "src/controllers/example.controllers.ts",
@@ -51,7 +48,7 @@ const files = [
   },
   {
     path: "src/utils/example.utils.ts",
-    content: `export const capitalizeString = (str:string) => {\n  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n}\n\nexport const generateRandomId = () => {\n  return Math.random().toString(36).substring(2, 9);\n}\n;`,
+    content: `export const capitalizeString = (str:string) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n\nexport const generateRandomId = () => Math.random().toString(36).substring(2, 9);`,
   },
   {
     path: "src/db/connection.ts",
@@ -71,7 +68,7 @@ const files = [
   },
   {
     path: "src/index.ts",
-    content: `import express, { NextFunction, Request, Response, Application } from "express";\nimport dotenv from "dotenv";\nimport cors from "cors";\nimport healthRoutes from "./routes/health.routes";\nimport exampleRoutes from "./routes/example.routes";\nimport ApiError from "./utils/ApiError";\n\ndotenv.config({paht: ".env"});\n\nconst app: Application = express();\nconst port = process.env.PORT || 5555;\nconst allowedOrigins = "*"; // Allows anyone to access the API\n\napp.use(express.json({limit: "20kb"})); // Limit the body size to 20kb\napp.use(cors({ origin: allowedOrigins }));\napp.use(express.urlencoded({ extended: true }));\n\n// API routes\napp.use("/api/health", healthRoutes);\napp.use("/api/example", exampleRoutes);\n\n// If your application using database, Establish database connection here\n\napp.listen(port, ()=> {\n  console.log(\`Server is running on port \${port}\`);\n});\n\napp.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {\n  res.status(err.statusCode || 500).json({ message: err.message, errors: err.errors });\n});\n\n`,
+    content: `import express, { NextFunction, Request, Response, Application } from "express";\nimport dotenv from "dotenv";\nimport cors from "cors";\nimport healthRoutes from "./routes/health.routes";\nimport exampleRoutes from "./routes/example.routes";\nimport ApiError from "./utils/ApiError";\n\ndotenv.config({path: ".env"});\n\nconst app: Application = express();\nconst port = process.env.PORT || 5555;\nconst allowedOrigins = "*"; // Allows anyone to access the API\n\napp.use(express.json({limit: "20kb"})); // Limit the body size to 20kb\napp.use(cors({ origin: allowedOrigins }));\napp.use(express.urlencoded({ extended: true }));\n\n// API routes\napp.use("/api/health", healthRoutes);\napp.use("/api/example", exampleRoutes);\n\n// If your application using database, Establish database connection here\n\napp.listen(port, ()=> {\n  console.log(\`Server is running on port \${port}\`);\n});\n\napp.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {\n  res.status(err.statusCode || 500).json({ message: err.message, errors: err.errors });\n});\n\n`,
   },
   { path: ".env", content: `PORT=5555` },
   {
@@ -81,10 +78,12 @@ const files = [
   {
     path: "package.json",
     content: `{\n  "name": "${
+      projectName === "."
+        ? path.basename(currentDir)
+        : projectName.toLowerCase()
+    }",\n  "version": "1.0.0",\n  "description": "Express TypeScript Starter",\n  "main": "dist/index.js",\n  "scripts": {\n    "start": "node dist/index.js",\n    "build": "tsc",\n    "dev": "nodemon --exec ts-node src/index.ts",\n    "lint": "eslint . --ext .ts"\n  },\n  "keywords": [\n    "${
       projectName === "." ? path.basename(currentDir) : projectName
-    }",\n  "version": "1.0.0",\n  "description": "Express TypeScript Starter",\n  "main": "dist/index.js",\n  "scripts": {\n    "start": "node dist/index.js",\n    "build": "tsc",\n    "dev": "nodemon --exec ts-node src/index.ts",\n    "lint": "eslint . --ext .ts"\n  },\n  "keywords": ["${
-      projectName === "." ? path.basename(currentDir) : projectName
-    }"],\n  "author": "", // Your name\n  "dependencies": {\n    "cors": "^2.8.5",\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/cors": "^2.8.17",\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
+    }"\n  ],\n  "author": "Your name",\n  "dependencies": {\n    "cors": "^2.8.5",\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/cors": "^2.8.17",\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
   },
   {
     path: ".eslintrc.json",
@@ -92,7 +91,7 @@ const files = [
   },
   {
     path: "README.md",
-    content: `# Express TypeScript Starter\n\nThis is a starter project for building a backend application with Express and TypeScript.\n\n## Features\n\n- Express server setup\n- TypeScript configuration\n- Nodemon for development\n- Health check route\n- ESLint for linting\n- Proper project structure\n\n## Getting Started\n\n**Note**: This project uses \`pnpm\` as the default package manager. If you prefer using other package managers, you can replace \`pnpm\` with your preferred package manager in the scripts.\n\n1. Clone this repository\n2. Run \`pnpm install\` to install dependencies\n3. Create a \`.env\` file in the root directory and add your environment variables (see \`.env.example\`)\n4. Run \`pnpm dev\` to start the development server\n5. Visit \`http://localhost:5555/api/health\` to check if the server is running\n\n## Scripts\n\n- \`pnpm dev\`: Start the development server with Nodemon\n- \`pnpm build\`: Build the TypeScript code\n- \`pnpm start\`: Start the production server\n- \`pnpm lint\`: Run ESLint\n\n## Project Structure\n\n\`\`\`\nsrc/\n├── controllers/\n│   ├── health.controller.ts\n│   └── example.controller.ts\n├── routes/\n│   ├── index.ts\n│   ├── health.route.ts\n│   └── example.route.ts\n├── services/\n│   ├── health.service.ts\n│   └── example.service.ts\n├── types/\n│   ├── health.type.ts\n│   └── example.type.ts\n├── utils/\n│   ├── health.util.ts\n│   └── example.util.ts\n└── index.ts\n\`\`\`\n\n## License\n\nThis project is licensed under the MIT License. See the \`LICENSE\` file for more details. Feel free to use this project or fork it on GitHub.`,
+    content: `# Express TypeScript Starter\n\nThis is a starter project for building a backend application with Express and TypeScript.\n\n## Features\n\n- Express server setup\n- TypeScript configuration\n- Nodemon for development\n- Health check route\n- ESLint for linting\n- Proper project structure\n\n## Installation\n\n<details>\n  <summary>Using \`pnpm\`</summary>\n\nTo install the package globally, run:\n\n\`\`\`bash\npnpm install -g expresss-ts@latest\n\`\`\`\n\n</details>\n\n<details>\n  <summary>Using \`npm\`</summary>\n\nTo install the package globally, run:\n\n\`\`\`bash\nnpm install -g expresss-ts@latest\n\`\`\`\n\n</details>\n\n# Getting Started\n\n **Note**: This project uses \`pnpm\` as the default package manager. If you prefer using other package managers, you can replace \`pnpm\` with your preferred package manager in the scripts.\n\n1. Clone this repository\n2. Run \`pnpm install\` to install dependencies\n3. Create a \`.env\` file in the root directory and add your environment variables (see \`.env.example\`)\n4. Run \`pnpm dev\` to start the development server\n5. Visit \`http://localhost:5555/api/health\` to check if the server is running\n## Scripts\n\n- \`pnpm dev\`: Start the development server with Nodemon\n- \`pnpm build\`: Build the TypeScript code\n- \`pnpm start\`: Start the production server\n- \`pnpm lint\`: Run ESLint`,
   },
   {
     path: "tsconfig.json",
