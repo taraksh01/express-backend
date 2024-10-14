@@ -18,7 +18,7 @@ const projectDir = path.join(currentDir, projectName);
 fs.mkdirSync(projectDir, { recursive: true });
 
 // Create src directory and its subdirectories
-const srcDirs = ["controllers", "routes", "types", "utils"];
+const srcDirs = ["controllers", "routes", "models", "db", "types", "utils"];
 
 fs.mkdirSync(path.join(projectDir, "src"));
 srcDirs.forEach((dir) => fs.mkdirSync(path.join(projectDir, "src", dir)));
@@ -27,7 +27,7 @@ srcDirs.forEach((dir) => fs.mkdirSync(path.join(projectDir, "src", dir)));
 const files = [
   {
     path: "src/controllers/example.controllers.ts",
-    content: `import { Request, Response } from "express";\nimport { ExampleType } from "../types/example.types";\nimport { capitalizeString, generateRandomId } from "../utils/example.utils";\n\nexport const getExample = (req: Request, res: Response) => {\n  const exampleItem: ExampleType = {\n    id: generateRandomId(),\n    name: capitalizeString("example"),\n    description: "This is an example item",\n  };\n\n  res.status(200).json(exampleItem);\n};\n\nexport const postExample = (req: Request, res: Response) => {\n  const { name = "Not provided", description = "Not provided" } = req.body;\n  const newItem: ExampleType = {\n    id: generateRandomId(),\n    name: capitalizeString(name),\n    description,\n  };\n\n  res.status(201).json(newItem);\n};\n`,
+    content: `import { Request, Response } from "express";\nimport { ExampleItem } from "../types/example.types";\nimport { capitalizeString, generateRandomId } from "../utils/example.utils";\nimport ApiError from "../utils/ApiError";\nimport ApiResponse from "../utils/ApiResponse";\nimport AsyncHandler from "../utils/AsyncHandler";\n\nexport const getExample = AsyncHandler(async (req: Request, res: Response) => {\n  try {\n    const exampleItem: ExampleItem = {\n      id: generateRandomId(),\n      name: capitalizeString("example"),\n      description: "This is an example item",\n    };\n\n    res.status(200).json(new ApiResponse(200, exampleItem));\n  } catch (error) {\n    throw new ApiError(500, "Failed to get example item");\n  }\n});\n\nexport const postExample = AsyncHandler(async (req: Request, res: Response) => {\n  try {\n    const { name, description } = req.body;\n    const newExampleItem: ExampleItem = {\n      id: generateRandomId(),\n      name, description\n    };\n\n    res.status(201).json(new ApiResponse(201, newExampleItem));\n  } catch (error) {\n    throw new ApiError(500, "Failed to create example item");\n  }\n});`,
   },
   {
     path: "src/routes/example.routes.ts",
@@ -35,11 +35,15 @@ const files = [
   },
   {
     path: "src/controllers/health.controllers.ts",
-    content: `import { Request, Response } from "express";\n\nexport const getHealth = (req: Request, res: Response) => {\n  res.status(200).json({ status: "OK", message: "Server is healthy" });\n};`,
+    content: `import { Request, Response } from "express";\nimport ApiError from "../utils/ApiError";\nimport ApiResponse from "../utils/ApiResponse";\nimport AsyncHandler from "../utils/AsyncHandler";\n\nexport const getHealth = AsyncHandler(async (req: Request, res: Response) => {\n  try {\n    res.status(200).json(new ApiResponse(200, { status: "OK" }, "Server is healthy"));\n  } catch (error) {\n    throw new ApiError(500, "Failed to get health status");\n  }\n});`,
   },
   {
     path: "src/routes/health.routes.ts",
     content: `import { Router } from "express";\nimport { getHealth } from "../controllers/health.controllers";\n\nconst router = Router();\n\nrouter.get("/", getHealth);\n\nexport default router;`,
+  },
+  {
+    path: "src/models/example.model.ts",
+    content: `// This is an example model`,
   },
   {
     path: "src/types/example.types.ts",
@@ -48,6 +52,22 @@ const files = [
   {
     path: "src/utils/example.utils.ts",
     content: `export const capitalizeString = (str:string) => {\n  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n}\n\nexport const generateRandomId = () => {\n  return Math.random().toString(36).substring(2, 9);\n}\n;`,
+  },
+  {
+    path: "src/db/connection.ts",
+    content: `// Write your database connection here`,
+  },
+  {
+    path: "src/utils/ApiError.ts",
+    content: `class ApiError extends Error {\n  statusCode: number;\n  data: null | any;\n  message: string;\n  success: boolean;\n  errors: any[];\n\n  constructor(statusCode: number, message = "Something went wrong", errors: any[] = [], stack = "") {\n    super(message);\n    this.statusCode = statusCode;\n    this.data = null;\n    this.message = message;\n    this.success = false;\n    this.errors = errors;\n\n    if (stack) {\n      this.stack = stack;\n    } else {\n      Error.captureStackTrace(this, this.constucor);\n    }\n  }\n}\n\nexport default ApiError;`,
+  },
+  {
+    path: "src/utils/ApiResponse.ts",
+    content: `class ApiResponse {\n  statusCode: number;\n  data: any;\n  message: string;\n  success: boolean;\n\n  constructor(statusCode: number, data: any, message = "This is a success response") {\n    this.statusCode = statusCode;\n    this.data = data;\n    this.message = message;\n    this.success = statusCode < 400;\n  }\n}\n\nexport default ApiResponse;`,
+  },
+  {
+    path: "src/utils/AsyncHandler.ts",
+    content: `import { Request, Response, NextFunction } from "express";\n\ntype AsyncFunction = (req: Request, res: Response, next: NextFunction) => Promise<any>;\n\nconst AsyncHandler = (execution: AsyncFunction) => (req: Request, res: Response, next: NextFunction) => {\n  Promise.resolve(execution(req, res, next)).catch((error) => {\n    next(error);\n  });\n};\n\nexport default AsyncHandler;\n`,
   },
   {
     path: "src/index.ts",

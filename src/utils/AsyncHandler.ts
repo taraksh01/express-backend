@@ -6,7 +6,7 @@ type AsyncFunction = (
   next: NextFunction
 ) => Promise<any>;
 
-export const AsyncHandler =
+const AsyncHandler =
   (execution: AsyncFunction) =>
   (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(execution(req, res, next)).catch((error) => {
