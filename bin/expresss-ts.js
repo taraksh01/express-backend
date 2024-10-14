@@ -27,7 +27,7 @@ srcDirs.forEach((dir) => fs.mkdirSync(path.join(projectDir, "src", dir)));
 const files = [
   {
     path: "src/controllers/example.controllers.ts",
-    content: `import { Request, Response } from "express";\nimport { ExampleItem } from "../types/example.types";\nimport { capitalizeString, generateRandomId } from "../utils/example.utils";\nimport ApiError from "../utils/ApiError";\nimport ApiResponse from "../utils/ApiResponse";\nimport AsyncHandler from "../utils/AsyncHandler";\n\nexport const getExample = AsyncHandler(async (req: Request, res: Response) => {\n  try {\n    const exampleItem: ExampleItem = {\n      id: generateRandomId(),\n      name: capitalizeString("example"),\n      description: "This is an example item",\n    };\n\n    res.status(200).json(new ApiResponse(200, exampleItem));\n  } catch (error) {\n    throw new ApiError(500, "Failed to get example item");\n  }\n});\n\nexport const postExample = AsyncHandler(async (req: Request, res: Response) => {\n  try {\n    const { name, description } = req.body;\n    const newExampleItem: ExampleItem = {\n      id: generateRandomId(),\n      name, description\n    };\n\n    res.status(201).json(new ApiResponse(201, newExampleItem));\n  } catch (error) {\n    throw new ApiError(500, "Failed to create example item");\n  }\n});`,
+    content: `import { Request, Response } from "express";\nimport { ExampleType } from "../types/example.types";\nimport { capitalizeString, generateRandomId } from "../utils/example.utils";\nimport ApiError from "../utils/ApiError";\nimport ApiResponse from "../utils/ApiResponse";\nimport AsyncHandler from "../utils/AsyncHandler";\n\nexport const getExample = AsyncHandler(async (req: Request, res: Response) => {\n  try {\n    const exampleItem: ExampleType = {\n      id: generateRandomId(),\n      name: capitalizeString("example"),\n      description: "This is an example item",\n    };\n\n    res.status(200).json(new ApiResponse(200, exampleItem));\n  } catch (error) {\n    throw new ApiError(500, "Failed to get example item");\n  }\n});\n\nexport const postExample = AsyncHandler(async (req: Request, res: Response) => {\n  try {\n    const { name = "not provided", description = "not provided" } = req.body;\n    const newExampleItem: ExampleType = {\n      id: generateRandomId(),\n      name, description\n    };\n\n    res.status(201).json(new ApiResponse(201, newExampleItem));\n  } catch (error) {\n    throw new ApiError(500, "Failed to create example item");\n  }\n});`,
   },
   {
     path: "src/routes/example.routes.ts",
@@ -59,7 +59,7 @@ const files = [
   },
   {
     path: "src/utils/ApiError.ts",
-    content: `class ApiError extends Error {\n  statusCode: number;\n  data: null | any;\n  message: string;\n  success: boolean;\n  errors: any[];\n\n  constructor(statusCode: number, message = "Something went wrong", errors: any[] = [], stack = "") {\n    super(message);\n    this.statusCode = statusCode;\n    this.data = null;\n    this.message = message;\n    this.success = false;\n    this.errors = errors;\n\n    if (stack) {\n      this.stack = stack;\n    } else {\n      Error.captureStackTrace(this, this.constucor);\n    }\n  }\n}\n\nexport default ApiError;`,
+    content: `class ApiError extends Error {\n  statusCode: number;\n  data: null | any;\n  message: string;\n  success: boolean;\n  errors: any[];\n\n  constructor(statusCode: number, message = "Something went wrong", errors: any[] = [], stack = "") {\n    super(message);\n    this.statusCode = statusCode;\n    this.data = null;\n    this.message = message;\n    this.success = false;\n    this.errors = errors;\n\n    if (stack) {\n      this.stack = stack;\n    } else {\n      Error.captureStackTrace(this, this.constructor);\n    }\n  }\n}\n\nexport default ApiError;`,
   },
   {
     path: "src/utils/ApiResponse.ts",
@@ -71,7 +71,7 @@ const files = [
   },
   {
     path: "src/index.ts",
-    content: `import express from "express";\nimport dotenv from "dotenv";\nimport healthRoutes from "./routes/health.routes";\nimport exampleRoutes from "./routes/example.routes";\n\ndotenv.config();\n\nconst app = express();\nconst port = process.env.PORT || 5555;\n\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// API routes\napp.use("/api/health", healthRoutes);\napp.use("/api/example", exampleRoutes);\n\napp.listen(port, () => {\n  console.log(\`Server is running on port \${port}\`);\n});`,
+    content: `import express, { NextFunction, Request, Response, Application } from "express";\nimport dotenv from "dotenv";\nimport cors from "cors";\nimport healthRoutes from "./routes/health.routes";\nimport exampleRoutes from "./routes/example.routes";\nimport ApiError from "./utils/ApiError";\n\ndotenv.config({paht: ".env"});\n\nconst app: Application = express();\nconst port = process.env.PORT || 5555;\nconst allowedOrigins = "*"; "// Allows anyone to access the API"\n\napp.use(express.json({limit: "20kb"})); "// Limit the body size to 20kb"\napp.use(cors({ origin: allowedOrigins }));\napp.use(express.urlencoded({ extended: true }));\n\n// API routes\napp.use("/api/health", healthRoutes);\napp.use("/api/example", exampleRoutes);\n\n"// If your application using database, Establish database connection here"\n\napp.listen(port, ()=> {\n  console.log(\`Server is running on port \${port}\`);\n});\n\napp.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {\n  res.status(err.statusCode || 500).json({ message: err.message, errors: err.errors });\n});\n\n`,
   },
   { path: ".env", content: `PORT=5555` },
   {
@@ -84,7 +84,7 @@ const files = [
       projectName === "." ? path.basename(currentDir) : projectName
     }",\n  "version": "1.0.0",\n  "description": "Express TypeScript Starter",\n  "main": "dist/index.js",\n  "scripts": {\n    "start": "node dist/index.js",\n    "build": "tsc",\n    "dev": "nodemon --exec ts-node src/index.ts",\n    "lint": "eslint . --ext .ts"\n  },\n  "keywords": ["${
       projectName === "." ? path.basename(currentDir) : projectName
-    }"],\n  "author": "",\n  "dependencies": {\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
+    }"],\n  "author": "", "// Your name"\n  "dependencies": {\n    "cors": "^2.8.5",\n    "dotenv": "^16.4.5",\n    "express": "^4.21.1"\n  },\n  "devDependencies": {\n    "@types/cors": "^2.8.17",\n    "@types/express": "^5.0.0",\n    "@types/node": "^22.7.5",\n    "@typescript-eslint/eslint-plugin": "^8.8.1",\n    "@typescript-eslint/parser": "^8.8.1",\n    "eslint": "^9.12.0",\n    "nodemon": "^3.1.7",\n    "ts-node": "^10.9.2",\n    "typescript": "^5.6.3"\n  }\n}`,
   },
   {
     path: ".eslintrc.json",
