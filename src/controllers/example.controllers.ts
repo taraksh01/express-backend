@@ -9,7 +9,7 @@ export const getExample = (req: Request, res: Response): void => {
     description: "This is an example item",
   };
 
-  res.json(exampleItem);
+  res.status(200).json(exampleItem);
 };
 
 export const postExample = (req: Request, res: Response): void => {

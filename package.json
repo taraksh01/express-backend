@@ -1,18 +1,21 @@
 {
-  "name": "create-express-ts-starter",
+  "name": "express-backend",
   "version": "1.0.0",
   "description": "CLI to create an Express TypeScript starter project",
-  "main": "index.js",
+  "main": "dist/index.js",
   "bin": {
-    "create-express-ts-starter": "./bin/create-express-ts-starter.js"
+    "express-backend": "./bin/express-backend.js"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "lint": "eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "create-express-ts-starter",
+    "taraksh01",
     "express",
     "typescript",
     "starter",
@@ -21,11 +24,17 @@
   "author": "Tarak Shaw",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@typescript-eslint/parser": "^8.8.1",
+    "eslint": "^9.12.0",
     "nodemon": "^3.1.7",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   }
 }
